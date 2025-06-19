@@ -1,0 +1,41 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "-o",
+      "obj/file.o",
+      "src/file.c"
+    ],
+    "directory": "/home/timo/projects/lowlevel/zero2hero/project",
+    "file": "/home/timo/projects/lowlevel/zero2hero/project/src/file.c",
+    "output": "/home/timo/projects/lowlevel/zero2hero/project/obj/file.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "-o",
+      "obj/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/timo/projects/lowlevel/zero2hero/project",
+    "file": "/home/timo/projects/lowlevel/zero2hero/project/src/main.c",
+    "output": "/home/timo/projects/lowlevel/zero2hero/project/obj/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Iinclude",
+      "-o",
+      "obj/parse.o",
+      "src/parse.c"
+    ],
+    "directory": "/home/timo/projects/lowlevel/zero2hero/project",
+    "file": "/home/timo/projects/lowlevel/zero2hero/project/src/parse.c",
+    "output": "/home/timo/projects/lowlevel/zero2hero/project/obj/parse.o"
+  }
+]
