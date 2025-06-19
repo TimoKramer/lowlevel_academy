@@ -2,9 +2,13 @@ TARGET = bin/dbview
 SRC = $(wildcard src/*.c)
 OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
 
-run: clean default
+run: clean default test
+
+test:
 	./$(TARGET) -f ./foo.db -n
-	./$(TARGET) -f ./foo.db -a "Timmy H.,123 Sheshire Ln.,120"
+	./$(TARGET) -f ./foo.db -a "Timmy H.,123 Sheshire Ln.,129"
+	./$(TARGET) -f ./foo.db -a "Kenny A.,34 Walloby Way,154" -l
+	./$(TARGET) -f ./foo.db -l
 
 default: $(TARGET)
 
