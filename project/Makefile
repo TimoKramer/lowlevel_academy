@@ -4,6 +4,7 @@ OBJ = $(patsubst src/%.c, obj/%.o, $(SRC))
 
 run: clean default
 	./$(TARGET) -f ./foo.db -n
+	./$(TARGET) -f ./foo.db -a "Timmy H.,123 Sheshire Ln.,120"
 
 default: $(TARGET)
 
