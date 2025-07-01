@@ -11,6 +11,8 @@ void print_usage(char *argv[]) {
     printf("Usage: %s -n -f <database file>\n", argv[0]);
     printf("\t -n create new database file\n");
     printf("\t -f (required) path to database file\n");
+    printf("\t -a add entry to database\n");
+    printf("\t -l list entries of database\n");
     return;
 }
 
