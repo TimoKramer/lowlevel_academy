@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <netinet/in.h>
 #include <netinet/ip.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -6,7 +7,34 @@
 #include <unistd.h>
 
 #define PORT 9090
-#define BACKLOG 5
+#define BACKLOG 0
+
+typedef enum {
+    PROTO_HELLO,
+} proto_type_e;
+
+typedef struct {
+    proto_type_e type;
+    unsigned short len;
+} proto_hdr_t;
+
+void handle_server(int fd) {
+    char buf[4096] = {0};
+    proto_hdr_t *hdr = (proto_hdr_t*)buf;
+    read(fd, buf, sizeof(proto_hdr_t) + sizeof(int));
+    hdr->type = ntohl(hdr->type);
+    hdr->len = ntohs(hdr->len);
+
+    int *data = (int*)&hdr[1];
+    *data = ntohl(*data);
+
+    if (*data != 1) {
+        printf("Protocol mismatch!\n");
+        return;
+    }
+
+    printf("Successfully connected to the server, protocol v1.\n");
+}
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -30,6 +58,8 @@ int main(int argc, char *argv[]) {
         close(serverSocket);
         return 0;
     }
+
+    handle_server(serverSocket);
 
     close(serverSocket);
 }
