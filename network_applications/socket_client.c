@@ -10,30 +10,62 @@
 #define BACKLOG 0
 
 typedef enum {
-    PROTO_HELLO,
+    PROTO_VERSION_1,
 } proto_type_e;
 
 typedef struct {
     proto_type_e type;
     unsigned short len;
+    unsigned short string_len;
 } proto_hdr_t;
 
-void handle_server(int fd) {
+void handle_server_response(int fd) {
     char buf[4096] = {0};
-    proto_hdr_t *hdr = (proto_hdr_t*)buf;
-    read(fd, buf, sizeof(proto_hdr_t) + sizeof(int));
-    hdr->type = ntohl(hdr->type);
-    hdr->len = ntohs(hdr->len);
 
-    int *data = (int*)&hdr[1];
-    *data = ntohl(*data);
-
-    if (*data != 1) {
-        printf("Protocol mismatch!\n");
+    ssize_t bytes_read = read(fd, buf, sizeof(proto_hdr_t));
+    if (bytes_read != sizeof(proto_hdr_t)) {
+        perror("read header");
         return;
     }
 
-    printf("Successfully connected to the server, protocol v1.\n");
+    proto_hdr_t *hdr = (proto_hdr_t*)buf;
+    hdr->type = ntohl(hdr->type);
+    hdr->len = ntohs(hdr->len);
+    hdr->string_len = ntohs(hdr->string_len);
+
+    printf("Received header - type: %d, len: %d, string_len: %d\n",
+       hdr->type, hdr->len, hdr->string_len);
+
+    // read protocol version
+    int version_data;
+    bytes_read = read(fd, &version_data, sizeof(int));
+    if (bytes_read != sizeof(int)) {
+        perror("read version data");
+        return;
+    }
+    version_data = ntohl(version_data);
+
+    if (version_data != 1) {
+        printf("Protocol mismatch! Expected version 1, got %d\n", version_data);
+        return;
+    }
+
+
+    // read payload
+    if (hdr->string_len > 0) {
+        char string_buf[4096] = {0};
+        bytes_read = read(fd, string_buf, hdr->string_len);
+        if (bytes_read != hdr->string_len) {
+            printf("Meh: %d %ld\n", hdr->string_len, bytes_read);
+            perror("read string data");
+            return;
+        }
+
+        printf("Successfully connected to server, protocol v%d\n", version_data);
+        printf("Server message: %.*s\n", hdr->string_len, string_buf);
+    } else {
+        printf("Successfully connected to server, protocol v%d (no message)\n", version_data);
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -59,7 +91,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    handle_server(serverSocket);
+    handle_server_response(serverSocket);
 
     close(serverSocket);
 }
