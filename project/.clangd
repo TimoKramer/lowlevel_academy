@@ -1,5 +1,0 @@
-CompileFlags:
-  Add: [
-        "-Wall",
-        "--include_directory=./include",
-]

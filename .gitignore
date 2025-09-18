@@ -1,4 +1,5 @@
-project/bin/
-project/bin/
-project/foo.db
-project/.cache/
+*.o
+.cache
+.clangd
+/bin
+foo.db
