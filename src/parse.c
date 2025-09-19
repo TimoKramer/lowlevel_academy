@@ -12,16 +12,21 @@
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
     if (addstring == NULL || dbhdr == NULL || employees == NULL) {
-        printf("invalid input");
+        printf("Invalid input\n");
         return STATUS_ERROR;
     }
 
     char *name = strtok(addstring, ",");
-    char *addr = strtok(NULL, ",");
+    char *address = strtok(NULL, ",");
     char *hours = strtok(NULL, ",");
 
+    if (name == NULL || address == NULL || hours == NULL) {
+        printf("Invalid employee data\n");
+        return STATUS_ERROR;
+    }
+
     strncpy(employees[dbhdr->count-1].name, name, sizeof(employees[dbhdr->count-1].name));
-    strncpy(employees[dbhdr->count-1].address, addr, sizeof(employees[dbhdr->count-1].address));
+    strncpy(employees[dbhdr->count-1].address, address, sizeof(employees[dbhdr->count-1].address));
     employees[dbhdr->count-1].hours = atoi(hours);
 
     return STATUS_SUCCESS;
@@ -136,7 +141,7 @@ int validate_db_header(int fd, struct dbheader_t **headerOut) {
 
 int create_db_header(struct dbheader_t **headerOut) {
     if (headerOut == NULL) {
-        printf("Invalid db header");
+        printf("Invalid db header\n");
         return STATUS_ERROR;
     }
     struct dbheader_t *header = calloc(1, sizeof(struct dbheader_t));
