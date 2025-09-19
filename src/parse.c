@@ -40,6 +40,10 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
 }
 
 int list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
+    if (dbhdr == NULL || employees == NULL) {
+        printf("Invalid input to list employees\n");
+        return STATUS_ERROR;
+    }
     int i = 0;
     for (; i < dbhdr->count; i++) {
         printf("Employee %d\n", i + 1);
