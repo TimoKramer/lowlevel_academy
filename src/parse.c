@@ -10,16 +10,6 @@
 #include "common.h"
 #include "parse.h"
 
-void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
-    int i = 0;
-    for (; i < dbhdr->count; i++) {
-        printf("Employee %d\n", i + 1);
-        printf("\tName: %s\n", employees[i].name);
-        printf("\tAddress: %s\n", employees[i].addr);
-        printf("\tHours: %d\n", employees[i].hours);
-    }
-}
-
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
 
     char *name = strtok(addstring, ",");
@@ -27,10 +17,20 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
     char *hours = strtok(NULL, ",");
 
     strncpy(employees[dbhdr->count-1].name, name, sizeof(employees[dbhdr->count-1].name));
-    strncpy(employees[dbhdr->count-1].addr, addr, sizeof(employees[dbhdr->count-1].addr));
+    strncpy(employees[dbhdr->count-1].address, addr, sizeof(employees[dbhdr->count-1].address));
     employees[dbhdr->count-1].hours = atoi(hours);
 
     return STATUS_SUCCESS;
+}
+
+void read_employee(struct dbheader_t *dbhdr, struct employee_t *employees) {
+    int i = 0;
+    for (; i < dbhdr->count; i++) {
+        printf("Employee %d\n", i + 1);
+        printf("\tName: %s\n", employees[i].name);
+        printf("\tAddress: %s\n", employees[i].address);
+        printf("\tHours: %d\n", employees[i].hours);
+    }
 }
 
 int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut) {
