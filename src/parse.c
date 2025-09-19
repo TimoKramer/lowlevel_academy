@@ -11,7 +11,7 @@
 #include "parse.h"
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
-    if (addstring == NULL) {
+    if (addstring == NULL || dbhdr == NULL || employees == NULL) {
         printf("invalid input");
         return STATUS_ERROR;
     }
