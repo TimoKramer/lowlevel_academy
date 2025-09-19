@@ -25,6 +25,11 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
         return STATUS_ERROR;
     }
 
+    if (dbhdr->count == 0) {
+        printf("Cannot add employee when header count set to 0\n");
+        return STATUS_ERROR;
+    }
+
     strncpy(employees[dbhdr->count-1].name, name, sizeof(employees[dbhdr->count-1].name));
     strncpy(employees[dbhdr->count-1].address, address, sizeof(employees[dbhdr->count-1].address));
     employees[dbhdr->count-1].hours = atoi(hours);
