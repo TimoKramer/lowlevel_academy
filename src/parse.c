@@ -27,7 +27,7 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
     return STATUS_SUCCESS;
 }
 
-void read_employee(struct dbheader_t *dbhdr, struct employee_t *employees) {
+void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
     int i = 0;
     for (; i < dbhdr->count; i++) {
         printf("Employee %d\n", i + 1);
