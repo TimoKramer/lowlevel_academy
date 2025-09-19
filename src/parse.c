@@ -11,6 +11,10 @@
 #include "parse.h"
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
+    if (addstring == NULL) {
+        printf("invalid input");
+        return STATUS_ERROR;
+    }
 
     char *name = strtok(addstring, ",");
     char *addr = strtok(NULL, ",");
