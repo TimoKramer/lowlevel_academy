@@ -57,9 +57,10 @@ int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employe
     return STATUS_SUCCESS;
 }
 
-void output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) {
+int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) {
     if (fd < 0) {
         printf("Got a bad FD from the user\n");
+        return STATUS_ERROR;
     }
 
     int realcount = dbhdr->count;
@@ -79,7 +80,7 @@ void output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees)
         write(fd, &employees[i], sizeof(struct employee_t));
     }
 
-    return;
+    return STATUS_SUCCESS;
 }
 
 int validate_db_header(int fd, struct dbheader_t **headerOut) {
