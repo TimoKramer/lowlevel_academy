@@ -10,8 +10,8 @@
 #include "common.h"
 #include "parse.h"
 
-int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
-    if (dbhdr == NULL || employees == NULL || addstring == NULL) {
+int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees, char *addstring) {
+    if (dbhdr == NULL || employees == NULL || *employees == NULL || addstring == NULL) {
         printf("Passed NULL to function call");
         return STATUS_ERROR;
     }
@@ -21,9 +21,9 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
         return STATUS_ERROR;
     }
     dbhdr->count++;
-    employees = realloc(employees, dbhdr->count*(sizeof(struct employee_t)));
-    if (addstring == NULL || dbhdr == NULL || employees == NULL) {
-        printf("Invalid input\n");
+    *employees = realloc(*employees, dbhdr->count*(sizeof(struct employee_t)));
+    if (*employees == NULL) {
+        printf("Realloc failed\n");
         return STATUS_ERROR;
     }
 
@@ -36,10 +36,9 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
         return STATUS_ERROR;
     }
 
-
-    strncpy(employees[dbhdr->count-1].name, name, sizeof(employees[dbhdr->count-1].name));
-    strncpy(employees[dbhdr->count-1].address, address, sizeof(employees[dbhdr->count-1].address));
-    employees[dbhdr->count-1].hours = atoi(hours);
+    strncpy((*employees)[dbhdr->count-1].name, name, sizeof((*employees)[dbhdr->count-1].name));
+    strncpy((*employees)[dbhdr->count-1].address, address, sizeof((*employees)[dbhdr->count-1].address));
+    (*employees)[dbhdr->count-1].hours = atoi(hours);
 
     return STATUS_SUCCESS;
 }
