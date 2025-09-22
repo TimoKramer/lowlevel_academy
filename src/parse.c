@@ -11,6 +11,11 @@
 #include "parse.h"
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
+    if (dbhdr == NULL || employees == NULL || addstring == NULL) {
+        printf("Passed NULL to function call");
+        return STATUS_ERROR;
+    }
+
     if (dbhdr->count < 0) {
         printf("Cannot add employee when header count set to negative\n");
         return STATUS_ERROR;
