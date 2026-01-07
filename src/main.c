@@ -4,6 +4,7 @@
 #include <bits/getopt_core.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <getopt.h>
 #include <unistd.h>
 
@@ -85,15 +86,39 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    if (employees == NULL) {
+        printf("Employees pointer is NULL after read_employees");
+        return -1;
+    }
+
     if (addstring) {
-        add_employee(dbhdr, &employees, addstring);
+        if (add_employee(dbhdr, &employees, addstring) != STATUS_SUCCESS) {
+            printf("Failed to add employee\n");
+            // Continue execution but don't add the employee
+        }
     }
 
     if (list) {
-        list_employees(dbhdr, employees);
+        if (list_employees(dbhdr, employees) != STATUS_SUCCESS) {
+            printf("Failed to list employees\n");
+        }
     }
 
-    output_file(dbfd, dbhdr, employees);
+    if (output_file(dbfd, dbhdr, employees) != STATUS_SUCCESS) {
+        printf("Failed to write output file\n");
+        // Continue to cleanup
+    }
+
+    // Clean up allocated memory
+    if (dbhdr != NULL) {
+        free(dbhdr);
+    }
+    if (employees != NULL) {
+        free(employees);
+    }
+    if (dbfd >= 0) {
+        close(dbfd);
+    }
 
     return 0;
 }

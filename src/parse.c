@@ -27,16 +27,21 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees, char *
     if (NULL == hours) return STATUS_ERROR;
 
     struct employee_t *e = *employees;
-    e = realloc(e, sizeof(struct employee_t)*dbhdr->count+1);
-    if (e == NULL) {
+    struct employee_t *temp = realloc(e, sizeof(struct employee_t) * (dbhdr->count + 1));
+    if (temp == NULL) {
         printf("Realloc failed\n");
         return STATUS_ERROR;
     }
+    e = temp;
 
     dbhdr->count++;
 
     strncpy(e[dbhdr->count-1].name, name, sizeof(e[dbhdr->count-1].name)-1);
+    e[dbhdr->count-1].name[sizeof(e[dbhdr->count-1].name)-1] = '\0';
+    
     strncpy(e[dbhdr->count-1].address, address, sizeof(e[dbhdr->count-1].address)-1);
+    e[dbhdr->count-1].address[sizeof(e[dbhdr->count-1].address)-1] = '\0';
+    
     e[dbhdr->count-1].hours = atoi(hours);
 
     *employees = e;
@@ -71,7 +76,12 @@ int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employe
         return STATUS_ERROR;
     }
 
-    read(fd, employees, count*sizeof(struct employee_t));
+    ssize_t bytes_read = read(fd, employees, count*sizeof(struct employee_t));
+    if (bytes_read != count*sizeof(struct employee_t)) {
+        printf("Failed to read employee data\n");
+        free(employees);
+        return STATUS_ERROR;
+    }
 
     int i = 0;
     for (; i < count; i++) {
@@ -95,14 +105,23 @@ int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) 
     dbhdr->count = htons(dbhdr->count);
     dbhdr->version = htons(dbhdr->version);
 
-    lseek(fd, 0, SEEK_SET);
+    if (lseek(fd, 0, SEEK_SET) == -1) {
+        printf("Failed to seek in file\n");
+        return STATUS_ERROR;
+    }
 
-    write(fd, dbhdr, sizeof(struct dbheader_t));
+    if (write(fd, dbhdr, sizeof(struct dbheader_t)) != sizeof(struct dbheader_t)) {
+        printf("Failed to write database header\n");
+        return STATUS_ERROR;
+    }
 
     int i = 0;
     for (; i < realcount; i++) {
         employees[i].hours = htonl(employees[i].hours);
-        write(fd, &employees[i], sizeof(struct employee_t));
+        if (write(fd, &employees[i], sizeof(struct employee_t)) != sizeof(struct employee_t)) {
+            printf("Failed to write employee %d\n", i);
+            return STATUS_ERROR;
+        }
     }
 
     return STATUS_SUCCESS;
