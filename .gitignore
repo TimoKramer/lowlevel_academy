@@ -1,5 +1,5 @@
 *.o
 .cache
 .clangd
-/bin
+bin/
 foo.db
