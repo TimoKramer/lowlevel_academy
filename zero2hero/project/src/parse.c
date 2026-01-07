@@ -11,34 +11,35 @@
 #include "parse.h"
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t **employees, char *addstring) {
-    if (dbhdr == NULL || employees == NULL || *employees == NULL || addstring == NULL) {
-        printf("Passed NULL to function call");
-        return STATUS_ERROR;
-    }
 
-    if (dbhdr->count < 0) {
-        printf("Cannot add employee when header count set to negative\n");
-        return STATUS_ERROR;
-    }
-    dbhdr->count++;
-    *employees = realloc(*employees, dbhdr->count*(sizeof(struct employee_t)));
-    if (*employees == NULL) {
+    if (NULL == dbhdr) return STATUS_ERROR;
+    if (NULL == employees) return STATUS_ERROR;
+    if (NULL == *employees) return STATUS_ERROR;
+    if (NULL == addstring) return STATUS_ERROR;
+
+    char *name = strtok(addstring, ",");
+    if (NULL == name) return STATUS_ERROR;
+
+    char *address = strtok(NULL, ",");
+    if (NULL == address) return STATUS_ERROR;
+
+    char *hours = strtok(NULL, ",");
+    if (NULL == hours) return STATUS_ERROR;
+
+    struct employee_t *e = *employees;
+    e = realloc(e, sizeof(struct employee_t)*dbhdr->count+1);
+    if (e == NULL) {
         printf("Realloc failed\n");
         return STATUS_ERROR;
     }
 
-    char *name = strtok(addstring, ",");
-    char *address = strtok(NULL, ",");
-    char *hours = strtok(NULL, ",");
+    dbhdr->count++;
 
-    if (name == NULL || address == NULL || hours == NULL) {
-        printf("Invalid employee data\n");
-        return STATUS_ERROR;
-    }
+    strncpy(e[dbhdr->count-1].name, name, sizeof(e[dbhdr->count-1].name)-1);
+    strncpy(e[dbhdr->count-1].address, address, sizeof(e[dbhdr->count-1].address)-1);
+    e[dbhdr->count-1].hours = atoi(hours);
 
-    strncpy((*employees)[dbhdr->count-1].name, name, sizeof((*employees)[dbhdr->count-1].name));
-    strncpy((*employees)[dbhdr->count-1].address, address, sizeof((*employees)[dbhdr->count-1].address));
-    (*employees)[dbhdr->count-1].hours = atoi(hours);
+    *employees = e;
 
     return STATUS_SUCCESS;
 }
